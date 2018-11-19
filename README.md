@@ -1,3 +1,7 @@
+Sjekk ut https://github.com/Seikho/node-chess
+
+
+
 # chessboard.js
 
 chessboard.js is a JavaScript chessboard component. It depends on [jQuery].

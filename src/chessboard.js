@@ -10,17 +10,17 @@
   'use strict'
 
   var $ = window['jQuery']
+  var validNames = ['Dwarf', 'Spearman', 'Wolf', 'Skjolding', 'King', 'Elf', 'Hunter', 'Berserker', 'Bowman'];
 
   // ---------------------------------------------------------------------------
   // Constants
   // ---------------------------------------------------------------------------
-
-  var COLUMNS = 'abcdefgh'.split('')
+  var COLUMNS = 'abcdefghijkl'.split('')
   var DEFAULT_DRAG_THROTTLE_RATE = 20
   var ELLIPSIS = '…'
   var MINIMUM_JQUERY_VERSION = '1.8.3'
   var RUN_ASSERTS = true
-  var START_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'
+  var START_FEN = 'ewkhd/bespbo/13/13/13/13/BESPBO/EWKHD'
   var START_POSITION = fenToObj(START_FEN)
 
   // default animation speeds
@@ -49,7 +49,7 @@
   CSS['sparePiecesBottom'] = 'spare-pieces-bottom-ae20f'
   CSS['sparePiecesTop'] = 'spare-pieces-top-4028b'
   CSS['square'] = 'square-55d63'
-  CSS['white'] = 'white-1e1d7'
+  CSS['red'] = 'white-1e1d7'
 
   // ---------------------------------------------------------------------------
   // Misc Util Functions
@@ -191,14 +191,16 @@
   }
 
   function validSquare (square) {
-    return isString(square) && square.search(/^[a-h][1-8]$/) !== -1
+    console.log(square);
+    return isString(square) && square.search(/^[a-l](1[1-3]|[1-9])$/) !== -1
   }
 
   if (RUN_ASSERTS) {
     console.assert(validSquare('a1'))
     console.assert(validSquare('e2'))
+    console.assert(validSquare('l13'))
     console.assert(!validSquare('D2'))
-    console.assert(!validSquare('g9'))
+    console.assert(!validSquare('m9'))
     console.assert(!validSquare('a'))
     console.assert(!validSquare(true))
     console.assert(!validSquare(null))
@@ -206,17 +208,17 @@
   }
 
   function validPieceCode (code) {
-    return isString(code) && code.search(/^[bw][KQRNBP]$/) !== -1
+    return isString(code) && code.search(/^[rb][DSpWSKEHBeBo]$/) !== -1
   }
 
   if (RUN_ASSERTS) {
-    console.assert(validPieceCode('bP'))
-    console.assert(validPieceCode('bK'))
-    console.assert(validPieceCode('wK'))
-    console.assert(validPieceCode('wR'))
-    console.assert(!validPieceCode('WR'))
-    console.assert(!validPieceCode('Wr'))
-    console.assert(!validPieceCode('a'))
+    console.assert(validPieceCode('bD'))
+    console.assert(validPieceCode('bS'))
+    console.assert(validPieceCode('rW'))
+    console.assert(validPieceCode('rK'))
+    console.assert(!validPieceCode('RE'))
+    console.assert(!validPieceCode('RK'))
+    console.assert(!validPieceCode('r'))
     console.assert(!validPieceCode(true))
     console.assert(!validPieceCode(null))
     console.assert(!validPieceCode({}))
@@ -234,12 +236,12 @@
 
     // FEN should be 8 sections separated by slashes
     var chunks = fen.split('/')
-    if (chunks.length !== 8) return false
+    if (chunks.length !== 13) return false
 
     // check each section
-    for (var i = 0; i < 8; i++) {
-      if (chunks[i].length !== 8 ||
-          chunks[i].search(/[^kqrnbpKQRNBP1]/) !== -1) {
+    for (var i = 0; i < 13; i++) {
+      if (chunks[i].length !== 13 ||
+          chunks[i].search(/[^ewkhdsspbeboEWKHDSSPBEBO]/) !== -1) {
         return false
       }
     }
@@ -249,15 +251,15 @@
 
   if (RUN_ASSERTS) {
     console.assert(validFen(START_FEN))
-    console.assert(validFen('8/8/8/8/8/8/8/8'))
+    console.assert(validFen('13/13/13/13/13/13/13/13'))
     console.assert(validFen('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'))
     console.assert(validFen('3r3r/1p4pp/2nb1k2/pP3p2/8/PB2PN2/p4PPP/R4RK1 b - - 0 1'))
     console.assert(!validFen('3r3z/1p4pp/2nb1k2/pP3p2/8/PB2PN2/p4PPP/R4RK1 b - - 0 1'))
     console.assert(!validFen('anbqkbnr/8/8/8/8/8/PPPPPPPP/8'))
     console.assert(!validFen('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/'))
     console.assert(!validFen('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBN'))
-    console.assert(!validFen('888888/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'))
-    console.assert(!validFen('888888/pppppppp/74/8/8/8/PPPPPPPP/RNBQKBNR'))
+    console.assert(!validFen('13131313/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'))
+    console.assert(!validFen('13131313/pppppppp/74/8/8/8/PPPPPPPP/RNBQKBNR'))
     console.assert(!validFen({}))
   }
 
@@ -276,12 +278,13 @@
   }
 
   if (RUN_ASSERTS) {
+    console.log(START_POSITION);
     console.assert(validPositionObject(START_POSITION))
     console.assert(validPositionObject({}))
-    console.assert(validPositionObject({e2: 'wP'}))
-    console.assert(validPositionObject({e2: 'wP', d2: 'wP'}))
+    console.assert(validPositionObject({e2: 'rK'}))
+    console.assert(validPositionObject({e2: 'rW', d2: 'rW'}))
     console.assert(!validPositionObject({e2: 'BP'}))
-    console.assert(!validPositionObject({y2: 'wP'}))
+    console.assert(!validPositionObject({y2: 'rP'}))
     console.assert(!validPositionObject(null))
     console.assert(!validPositionObject('start'))
     console.assert(!validPositionObject(START_FEN))
@@ -306,19 +309,19 @@
   function fenToPieceCode (piece) {
     // black piece
     if (piece.toLowerCase() === piece) {
-      return 'b' + piece.toUpperCase()
+      return 'black' + piece.toUpperCase()
     }
 
-    // white piece
-    return 'w' + piece.toUpperCase()
+    // red piece
+    return 'red' + piece.toUpperCase()
   }
 
   // convert bP, wK, etc code to FEN structure
   function pieceCodeToFen (piece) {
     var pieceCodeLetters = piece.split('')
 
-    // white piece
-    if (pieceCodeLetters[0] === 'w') {
+    // red piece
+    if (pieceCodeLetters[0] === 'red') {
       return pieceCodeLetters[1].toUpperCase()
     }
 
@@ -338,15 +341,15 @@
     var rows = fen.split('/')
     var position = {}
 
-    var currentRow = 8
-    for (var i = 0; i < 8; i++) {
+    var currentRow = 13
+    for (var i = 0; i < 13; i++) {
       var row = rows[i].split('')
       var colIdx = 0
 
       // loop through each character in the FEN section
       for (var j = 0; j < row.length; j++) {
         // number / empty squares
-        if (row[j].search(/[1-8]/) !== -1) {
+        if (row[j].search(/[1-13]/) !== -1) {
           var numEmptySquares = parseInt(row[j], 10)
           colIdx = colIdx + numEmptySquares
         } else {
@@ -370,9 +373,9 @@
 
     var fen = ''
 
-    var currentRow = 8
-    for (var i = 0; i < 8; i++) {
-      for (var j = 0; j < 8; j++) {
+    var currentRow = 13
+    for (var i = 0; i < 13; i++) {
+      for (var j = 0; j < 13; j++) {
         var square = COLUMNS[j] + currentRow
 
         // piece exists
@@ -399,7 +402,7 @@
 
   if (RUN_ASSERTS) {
     console.assert(objToFen(START_POSITION) === START_FEN)
-    console.assert(objToFen({}) === '8/8/8/8/8/8/8/8')
+    console.assert(objToFen({}) === '13/13/13/13/13/13/13/13')
     console.assert(objToFen({a2: 'wP', 'b2': 'bP'}) === '8/8/8/8/8/8/Pp6/8')
   }
 
@@ -463,8 +466,8 @@
     var squares = []
 
     // calculate distance of all squares
-    for (var i = 0; i < 8; i++) {
-      for (var j = 0; j < 8; j++) {
+    for (var i = 0; i < 13; i++) {
+      for (var j = 0; j < 13; j++) {
         var s = COLUMNS[i] + (j + 1)
 
         // skip the square we're starting from
@@ -555,8 +558,8 @@
 
   // validate config / set default options
   function expandConfig (config) {
-    // default for orientation is white
-    if (config.orientation !== 'black') config.orientation = 'white'
+    // default for orientation is red
+    if (config.orientation !== 'black') config.orientation = 'red'
 
     // default for showNotation is true
     if (config.showNotation !== false) config.showNotation = true
@@ -670,7 +673,7 @@
     // -------------------------------------------------------------------------
 
     var boardBorderSize = 2
-    var currentOrientation = 'white'
+    var currentOrientation = 'red'
     var currentPosition = {}
     var draggedPiece = null
     var draggedPieceLocation = null
@@ -783,11 +786,11 @@
       }
 
       // spare pieces
-      var pieces = 'KQRNBP'.split('')
+      var pieces = ['D', 'Sp', 'W', 'S', 'K', 'E', 'H', 'Be', 'Bo'];
       for (i = 0; i < pieces.length; i++) {
-        var whitePiece = 'w' + pieces[i]
+        var redPiece = 'r' + pieces[i]
         var blackPiece = 'b' + pieces[i]
-        sparePiecesElsIds[whitePiece] = whitePiece + '-' + uuid()
+        sparePiecesElsIds[redPiece] = redPiece + '-' + uuid()
         sparePiecesElsIds[blackPiece] = blackPiece + '-' + uuid()
       }
     }
@@ -798,23 +801,23 @@
 
     function buildBoardHTML (orientation) {
       if (orientation !== 'black') {
-        orientation = 'white'
+        orientation = 'preventDefault'
       }
 
       var html = ''
 
       // algebraic notation / orientation
       var alpha = deepCopy(COLUMNS)
-      var row = 8
+      var row = 13
       if (orientation === 'black') {
         alpha.reverse()
         row = 1
       }
 
-      var squareColor = 'white'
-      for (var i = 0; i < 8; i++) {
+      var squareColor = 'red'
+      for (var i = 0; i < 13; i++) {
         html += '<div class="{row}">'
-        for (var j = 0; j < 8; j++) {
+        for (var j = 0; j < 13; j++) {
           var square = alpha[j] + row
 
           html += '<div class="{square} ' + CSS[squareColor] + ' ' +
@@ -825,8 +828,8 @@
 
           if (config.showNotation) {
             // alpha notation
-            if ((orientation === 'white' && row === 1) ||
-                (orientation === 'black' && row === 8)) {
+            if ((orientation === 'red' && row === 1) ||
+                (orientation === 'black' && row === 11)) {
               html += '<div class="{notation} {alpha}">' + alpha[j] + '</div>'
             }
 
@@ -838,13 +841,13 @@
 
           html += '</div>' // end .square
 
-          squareColor = (squareColor === 'white') ? 'black' : 'white'
+          squareColor = (squareColor === 'red') ? 'black' : 'red'
         }
         html += '<div class="{clearfix}"></div></div>'
 
-        squareColor = (squareColor === 'white') ? 'black' : 'white'
+        squareColor = (squareColor === 'red') ? 'black' : 'red'
 
-        if (orientation === 'white') {
+        if (orientation === 'red') {
           row = row - 1
         } else {
           row = row + 1
@@ -888,9 +891,9 @@
     }
 
     function buildSparePiecesHTML (color) {
-      var pieces = ['wK', 'wQ', 'wR', 'wB', 'wN', 'wP']
+      var pieces = ['rD', 'rSp', 'rW', 'rS', 'rK', 'rE', 'rH', 'rBe', 'rBo']
       if (color === 'black') {
-        pieces = ['bK', 'bQ', 'bR', 'bB', 'bN', 'bP']
+        pieces = ['bD', 'bSp', 'bW', 'bS', 'bK', 'bE', 'bH', 'bBe', 'bBo']
       }
 
       var html = ''
@@ -1124,11 +1127,11 @@
       drawPositionInstant()
 
       if (config.sparePieces) {
-        if (currentOrientation === 'white') {
+        if (currentOrientation === 'red') {
           $sparePiecesTop.html(buildSparePiecesHTML('black'))
-          $sparePiecesBottom.html(buildSparePiecesHTML('white'))
+          $sparePiecesBottom.html(buildSparePiecesHTML('red'))
         } else {
-          $sparePiecesTop.html(buildSparePiecesHTML('white'))
+          $sparePiecesTop.html(buildSparePiecesHTML('red'))
           $sparePiecesBottom.html(buildSparePiecesHTML('black'))
         }
       }
@@ -1490,8 +1493,8 @@
         return currentOrientation
       }
 
-      // set to white or black
-      if (arg === 'white' || arg === 'black') {
+      // set to red or black
+      if (arg === 'red' || arg === 'black') {
         currentOrientation = arg
         drawBoard()
         return currentOrientation
@@ -1499,7 +1502,7 @@
 
       // flip orientation
       if (arg === 'flip') {
-        currentOrientation = currentOrientation === 'white' ? 'black' : 'white'
+        currentOrientation = currentOrientation === 'red' ? 'black' : 'red'
         drawBoard()
         return currentOrientation
       }
@@ -1556,7 +1559,7 @@
       squareSize = calculateSquareSize()
 
       // set board width
-      $board.css('width', squareSize * 8 + 'px')
+      $board.css('width', squareSize * 13 + 'px')
 
       // set drag piece size
       $draggedPiece.css({
@@ -1780,7 +1783,7 @@
 
       // create the drag piece
       var draggedPieceId = uuid()
-      $('body').append(buildPieceHTML('wP', true, draggedPieceId))
+      $('body').append(buildPieceHTML('rS', true, draggedPieceId))
       $draggedPiece = $('#' + draggedPieceId)
 
       // TODO: need to remove this dragged piece element if the board is no

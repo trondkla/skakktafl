@@ -12,8 +12,15 @@
     "jquery": ">=1.8.3"
   },
   "devDependencies": {
+    "humps": "^2.0.1",
     "kidif": "1.1.0",
+    "lodash": "^4.17.5",
     "mustache": "2.3.0",
+    "normalizr": "^3.2.4",
+    "redux": "^3.7.2",
+    "redux-devtools": "^3.4.1",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.2.0",
     "standard": "10.0.2"
   },
   "scripts": {

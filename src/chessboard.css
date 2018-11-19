@@ -8,18 +8,33 @@
  * Date: $date$
  */
 
+ #myBoard {
+   padding: 1em;
+   text-align: center;
+   margin: auto;
+ }
+
 .clearfix-7da63 {
   clear: both;
 }
 
 .board-b72b1 {
-  border: 2px solid #404040;
+  margin: 0em;
+  padding: 1em;
+  background-color: black;
+
   box-sizing: content-box;
 }
 
 .square-55d63 {
   float: left;
   position: relative;
+
+  background: black;
+  box-sizing: border-box;
+  border-radius: 0.55em;
+
+  border: 1px solid black;
 
   /* disable any native browser highlighting */
   -webkit-touch-callout: none;
@@ -31,12 +46,12 @@
 }
 
 .white-1e1d7 {
-  background-color: #f0d9b5;
+  background-color: white;
   color: #b58863;
 }
 
 .black-3c85d {
-  background-color: #b58863;
+  background-color: white;
   color: #f0d9b5;
 }
 
